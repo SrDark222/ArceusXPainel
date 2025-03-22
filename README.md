@@ -3,7 +3,11 @@ Aqui está o README.md atualizado com as correções e instruções detalhadas p
 # Guia de Execução do Painel Arceus X
 
 **Passos para executar:**
-
+## O PRINCIPAL 🥀
+*Conceder Acesso ao Armazenamento*
+```bash
+termux-setup-storage
+```
 ## 1. **Atualizar pacotes e instalar dependências**
 *Antes de executar o script, é necessário garantir que os pacotes do Termux estejam atualizados e as dependências sejam instaladas. Para isso, execute os seguintes comandos:*
 

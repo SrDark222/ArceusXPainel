@@ -40,7 +40,7 @@ add_autoexec_script() {
     echo -e "\033[1;33m==============================================\033[0m"
     
     # Mostrar arquivos disponíveis na pasta de scripts (apenas .lua e .txt)
-    files=($(find $SCRIPT_HUB -maxdepth 1 -type f -iname "*.lua" -o -iname "*.txt"))
+    files=($(find "$SCRIPT_HUB" -maxdepth 1 -type f -iname "*.lua" -o -iname "*.txt"))
     
     # Exibir scripts encontrados
     if [ ${#files[@]} -eq 0 ]; then
@@ -76,7 +76,7 @@ move_files() {
     echo -e "\033[1;33m==============================================\033[0m"
     
     # Mostrar arquivos disponíveis na pasta de scripts (apenas .lua e .txt)
-    files=($(find $SCRIPT_HUB -maxdepth 1 -type f -iname "*.lua" -o -iname "*.txt"))
+    files=($(find "$SCRIPT_HUB" -maxdepth 1 -type f -iname "*.lua" -o -iname "*.txt"))
     
     # Exibir arquivos encontrados
     if [ ${#files[@]} -eq 0 ]; then

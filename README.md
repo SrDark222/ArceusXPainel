@@ -12,7 +12,7 @@ Se você ainda não fez isso, crie um repositório no GitHub e faça upload do a
 
 Siga os seguintes passos no Termux para baixar o script diretamente do GitHub:
 
-## 1. Abra o **Termux** no seu dispositivo Android.
+### 1. Abra o **Termux** no seu dispositivo Android.
 
 ## 2. **Instalar curl ou wget**:
 
@@ -22,8 +22,7 @@ Siga os seguintes passos no Termux para baixar o script diretamente do GitHub:
   ``bash
    pkg install curl``
 
-Ou para **wget**:
-```pkg install wget```
+Ou para **wget*`pkg install wget`
 
 ## 3. Baixar o Script:
 

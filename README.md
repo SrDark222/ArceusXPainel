@@ -13,7 +13,7 @@
 ## 2. Clonar o repositório
 
 ```bash
-git clone https://github.com/SEU-REPOSITORIO/painel-arceus-x.git
+git clone https://github.com/SrDark222/ArceusXPainel/blob/main/ArceusXPainel.sh
 cd painel-arceus-x
 ```
 

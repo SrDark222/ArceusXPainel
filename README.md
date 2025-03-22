@@ -12,9 +12,9 @@ Se você ainda não fez isso, crie um repositório no GitHub e faça upload do a
 
 Siga os seguintes passos no Termux para baixar o script diretamente do GitHub:
 
-1. Abra o **Termux** no seu dispositivo Android.
+## 1. Abra o **Termux** no seu dispositivo Android.
 
-2. **Instalar curl ou wget**:
+## 2. **Instalar curl ou wget**:
 
    Caso você não tenha o `curl` ou o `wget` instalado, instale um deles com os seguintes comandos:
 
@@ -22,35 +22,32 @@ Siga os seguintes passos no Termux para baixar o script diretamente do GitHub:
    ```bash
    pkg install curl
 
-Ou para wget:
+Ou para **wget**:
+```pkg install wget```
 
-pkg install wget
-
-3. Baixar o Script:
+## 3. Baixar o Script:
 
 Agora, baixe o script diretamente do GitHub. Substitua o link abaixo pelo link do seu arquivo ArcesXPainel.sh no GitHub:
 
-Com curl:
+## Com curl:
+```curl -O https://github.com/seuusuario/ArcesXPainel/raw/main/ArcesXPainel.sh```
 
-curl -O https://github.com/seuusuario/ArcesXPainel/raw/main/ArcesXPainel.sh
-
-Com wget:
-
-wget https://github.com/seuusuario/ArcesXPainel/raw/main/ArcesXPainel.sh
+## Com wget:
+```wget https://github.com/seuusuario/ArcesXPainel/raw/main/ArcesXPainel.sh```
 
 
 
-3. Tornar o Script Executável
+## 3. Tornar o Script Executável
 
 Após o download, você precisa tornar o script executável. Para isso, execute o seguinte comando:
 
-chmod +x ArcesXPainel.sh
+```chmod +x ArcesXPainel.sh```
 
-4. Executar o Script
+## 4. Executar o Script
 
 Agora, você pode executar o script com o comando abaixo:
 
-./ArcesXPainel.sh
+```./ArcesXPainel.sh```
 
 Isso iniciará o painel de controle, onde você verá um menu com várias opções, como:
 

@@ -15,6 +15,18 @@ termux-setup-storage
 pkg update --fix-missing
 pkg upgrade
 ```
+## CASO VOCE TIVER CONCORADO COM AS INSTALAÇÕES ACIMA [faca que nem abaixo]
+*** sources.list (Y/I/N/O/D/Z) [default=N] ?
+Progress: [ 77%] [#####################.......]
+```bash
+N
+```
+*** bash.bashrc (Y/I/N/O/D/Z) [default=N] ?
+Progress: [ 81%] [######################......]
+```bash
+N
+```
+### E fim as instalação estara completa.
 ## Apos instalação & upgrade
 ```bash
 pkg install git

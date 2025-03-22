@@ -5,14 +5,21 @@ Aqui está o README.md atualizado com as correções e instruções detalhadas p
 **Passos para executar:**
 
 ## 1. **Atualizar pacotes e instalar dependências**
-Antes de executar o script, é necessário garantir que os pacotes do Termux estejam atualizados e as dependências sejam instaladas. Para isso, execute os seguintes comandos:
+*Antes de executar o script, é necessário garantir que os pacotes do Termux estejam atualizados e as dependências sejam instaladas. Para isso, execute os seguintes comandos:*
 
 ```bash
 pkg update --fix-missing
 pkg upgrade
+```
+## Apos instalação & upgrade
+```bash
 pkg install git
+```
+### ***Espere A mensagem de instalação do git e digite***
+```bash
 Y
 ```
+
 
 ## 2. Clonar o repositório
 

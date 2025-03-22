@@ -3,24 +3,28 @@
 # Solicita acesso ao armazenamento
 termux-setup-storage
 
-# Decoração ASCII
-ascii_art() {
-    clear
-    echo -e "\033[1;35m================================================\033[0m"
-    echo -e "\033[1;32m    ᗩ﹒💙ʬʬ﹒ PAINEL ARCEUS X \033[1;33m[Melhorado] \033[0m"
-    echo -e "\033[1;35m================================================\033[0m"
-}
+# Caminhos das pastas do Arceus X
+BASE_DIR="/storage/emulated/0/Arceus X"
+WORKSPACE="$BASE_DIR/Workspace"
+CONFIGS="$BASE_DIR/Configs"
+AUTOEXEC="$BASE_DIR/AutoExec"
+
+# Criar pastas necessárias caso não existam
+mkdir -p "$AUTOEXEC"
 
 # Exibir menu principal
 menu() {
-    ascii_art
-    echo -e " \033[1;36m1 - \033[1;33mAdicionar AutoExec Script\033[0m"
-    echo -e " \033[1;36m2 - \033[1;33mRemover AutoExec Script\033[0m"
+    clear
+    echo -e "\033[1;35m==============================================\033[0m"
+    echo -e "\033[1;32m      ᗩ﹒💙ʬʬ﹒ PAINEL ARCEUS X \033[1;33m[v2] \033[0m"
+    echo -e "\033[1;35m==============================================\033[0m"
+    echo -e " \033[1;36m1 - \033[1;33mAdicionar Script ao AutoExec\033[0m"
+    echo -e " \033[1;36m2 - \033[1;33mRemover Script do AutoExec\033[0m"
     echo -e " \033[1;36m3 - \033[1;33mLimpar logs do Workspace\033[0m"
-    echo -e " \033[1;36m4 - \033[1;33mRemover Abas do Arceus X\033[0m"
+    echo -e " \033[1;36m4 - \033[1;33mRemover abas do Arceus X\033[0m"
     echo -e " \033[1;36m5 - \033[1;33mMinimizar Arceus X\033[0m"
     echo -e " \033[1;31m0 - Sair\033[0m"
-    echo -e "\033[1;35m================================================\033[0m"
+    echo -e "\033[1;35m==============================================\033[0m"
     echo -ne " \033[1;34mEscolha uma opção: \033[0m"
     read opcao
     case $opcao in
@@ -34,59 +38,53 @@ menu() {
     esac
 }
 
-# Função para buscar scripts e exibir lista paginada
+# Buscar scripts na pasta de downloads
 buscar_scripts() {
-    arquivos=($(find /storage/emulated/0 -type f -iname "*.lua" -o -iname "*.txt" 2>/dev/null | sed 's|.*/||' | tr ' ' '-'))
-    
+    arquivos=($(find /storage/emulated/0/Download -type f -iname "*.lua" -o -iname "*.txt" 2>/dev/null))
+
     if [[ ${#arquivos[@]} -eq 0 ]]; then
         echo -e "\033[1;31mNenhum script encontrado!\033[0m"
         sleep 2
         menu
     fi
-    
-    pagina=1
-    while true; do
-        clear
-        ascii_art
-        echo -e "\033[1;36mProcurando scripts Lua...\033[0m"
-        echo -e "\033[1;35m==========================\033[0m"
-        for i in $(seq $(((pagina-1)*10)) $((pagina*10-1))); do
-            [[ -n "${arquivos[i]}" ]] && echo -e "\033[1;36m$((i+1)). \033[1;33m${arquivos[i]}\033[0m"
-        done
-        echo -e "\033[1;35m==========================\033[0m"
-        echo -e "0. Voltar | 🡺 Próxima Página (Digite: >) | 🡸 Página Anterior (Digite: <)"
-        echo -ne "\033[1;34mEscolha um script: \033[0m"
-        read escolha
 
-        if [[ $escolha == ">" ]]; then
-            ((pagina++))
-        elif [[ $escolha == "<" && $pagina -gt 1 ]]; then
-            ((pagina--))
-        elif [[ $escolha -eq 0 ]]; then
-            menu
-        elif [[ $escolha -ge 1 && $escolha -le ${#arquivos[@]} ]]; then
-            echo "${arquivos[$((escolha-1))]}"
-            return
-        fi
+    echo -e "\033[1;36mScripts disponíveis:\033[0m"
+    for i in "${!arquivos[@]}"; do
+        nome=$(basename "${arquivos[i]}")
+        echo -e "\033[1;36m$((i+1)). \033[1;33m$nome\033[0m"
     done
-}
+    echo -e "\033[1;35m==============================================\033[0m"
+    echo -ne "\033[1;34mEscolha um script para adicionar ao AutoExec: \033[0m"
+    read escolha
 
-# Adicionar AutoExec Script
-adicionar_autoexec() {
-    ascii_art
-    script_escolhido=$(buscar_scripts)
-    if [[ -n "$script_escolhido" ]]; then
-        mv "/storage/emulated/0/$script_escolhido" "/storage/emulated/0/Arceus X/AutoExec/"
-        echo -e "\033[1;32m✅ Script $script_escolhido adicionado ao AutoExec!\033[0m"
+    if [[ $escolha -ge 1 && $escolha -le ${#arquivos[@]} ]]; then
+        arquivo_escolhido="${arquivos[$((escolha-1))]}"
+        nome_arquivo=$(basename "$arquivo_escolhido" | tr ' ' '-')  
+        destino="$AUTOEXEC/$nome_arquivo"
+        
+        # Mover o arquivo e dar permissões
+        mv -f "$arquivo_escolhido" "$destino"
+        chmod 777 "$destino"
+
+        if [[ -f "$destino" ]]; then
+            echo -e "\033[1;32m✅ Script '$nome_arquivo' adicionado ao AutoExec!\033[0m"
+        else
+            echo -e "\033[1;31m❌ Erro ao mover o arquivo!\033[0m"
+        fi
         sleep 2
     fi
     menu
 }
 
-# Remover AutoExec Script
+# Adicionar script ao AutoExec
+adicionar_autoexec() {
+    buscar_scripts
+}
+
+# Remover script do AutoExec
 remover_autoexec() {
-    ascii_art
-    scripts=($(ls /storage/emulated/0/Arceus\ X/AutoExec/ 2>/dev/null | tr ' ' '-'))
+    scripts=($(ls "$AUTOEXEC" 2>/dev/null))
+    
     if [[ ${#scripts[@]} -eq 0 ]]; then
         echo -e "\033[1;31mNenhum script AutoExec encontrado!\033[0m"
         sleep 2
@@ -97,12 +95,12 @@ remover_autoexec() {
     for i in "${!scripts[@]}"; do
         echo -e "\033[1;36m$((i+1)). \033[1;33m${scripts[i]}\033[0m"
     done
-    echo -e "\033[1;35m==========================\033[0m"
+    echo -e "\033[1;35m==============================================\033[0m"
     echo -ne "\033[1;34mEscolha um script para remover: \033[0m"
     read escolha
 
     if [[ $escolha -ge 1 && $escolha -le ${#scripts[@]} ]]; then
-        rm "/storage/emulated/0/Arceus X/AutoExec/${scripts[$((escolha-1))]}"
+        rm -f "$AUTOEXEC/${scripts[$((escolha-1))]}"
         echo -e "\033[1;32m✅ Script removido com sucesso!\033[0m"
     fi
     sleep 2
@@ -111,25 +109,22 @@ remover_autoexec() {
 
 # Limpar logs do Workspace
 limpar_logs() {
-    ascii_art
-    rm -rf /storage/emulated/0/Arceus\ X/Workspace/*
-    echo -e "\033[1;32m✅ Logs apagados com sucesso!\033[0m"
+    rm -rf "$WORKSPACE"/*
+    echo -e "\033[1;32m✅ Logs apagados!\033[0m"
     sleep 2
     menu
 }
 
-# Remover Abas do Arceus X
+# Remover abas do Arceus X (somente o arquivo tabs.ax)
 remover_abas() {
-    ascii_art
-    rm -f /storage/emulated/0/Arceus\ X/Configs/tabs.ax
+    rm -f "$CONFIGS/tabs.ax"
     echo -e "\033[1;32m✅ Abas removidas!\033[0m"
     sleep 2
     menu
 }
 
-# Minimizar Arceus X
+# Minimizar Arceus X (limpando cache e arquivos temporários)
 minimizar_arceus() {
-    ascii_art
     rm -rf /storage/emulated/0/Android/data/com.arceusx/cache/*
     rm -rf /storage/emulated/0/Android/data/com.arceusx/files/*
     echo -e "\033[1;32m✅ Arceus X minimizado!\033[0m"
@@ -137,5 +132,5 @@ minimizar_arceus() {
     menu
 }
 
-# Executar menu principal
+# Executar menu
 menu

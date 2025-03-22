@@ -1,5 +1,18 @@
 #!/bin/bash
 
+# Exibir ASCII Art
+echo -e "\033[1;32m
+--[[
+___  ___                       ______ _    
+|  \/  |                       |  _  \ |   
+| .  . | ___ _ __   ___  _ __  | | | | | __
+| |\/| |/ _ \ '_ \ / _ \| '__| | | | | |/ /
+| |  | |  __/ | | | (_) | |    | |/ /|   < 
+\_|  |_/\___|_| |_|\___/|_|    |___/ |_|\_\
+  By ~ Dkzin 🇪🇬 / TCC DOMINA 
+]]--
+\033[0m"
+
 # Função para exibir o menu com decoração melhorada
 menu() {
     clear

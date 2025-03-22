@@ -1,19 +1,6 @@
 #!/bin/bash
 
-# Exibir ASCII Art
-echo -e "\033[1;32m
---[[
-___  ___                       ______ _    
-|  \/  |                       |  _  \ |   
-| .  . | ___ _ __   ___  _ __  | | | | | __
-| |\/| |/ _ \ '_ \ / _ \| '__| | | | | |/ /
-| |  | |  __/ | | | (_) | |    | |/ /|   < 
-\_|  |_/\___|_| |_|\___/|_|    |___/ |_|\_\
-  By ~ Dkzin 🇪🇬 / TCC DOMINA 
-]]--
-\033[0m"
-
-# Função para exibir o menu com decoração melhorada
+# Função para exibir o menu principal
 menu() {
     clear
     echo -e "\033[1;35m================================================\033[0m"
@@ -40,9 +27,49 @@ menu() {
     esac
 }
 
-# Função para buscar arquivos Lua contendo "loadstring" ignorando maiúsculas/minúsculas
+# Função para buscar scripts Lua em diretórios, ignorando maiúsculas/minúsculas
 buscar_scripts() {
-    find /storage/emulated/0 -type f -iname "*.lua" -exec grep -il "loadstring" {} + 2>/dev/null
+    echo -e "\033[1;36mProcurando scripts Lua...\033[0m"
+    sleep 1
+    files=$(find /storage/emulated/0 -type f -iname "*.lua" -exec grep -il "loadstring" {} + 2>/dev/null)
+
+    # Exibir scripts encontrados
+    echo -e "\033[1;35m==========================\033[0m"
+    echo -e "\033[1;32mScripts disponíveis:\033[0m"
+    local count=1
+    for script in $files; do
+        echo -e "$count. $script"
+        ((count++))
+        if [ $count -gt 10 ]; then
+            break
+        fi
+    done
+
+    echo -e "\033[1;35m==========================\033[0m"
+    echo -e "\033[1;34mEscolha um script ou 0 para voltar:\033[0m"
+    read escolha
+    if [ "$escolha" == "0" ]; then
+        menu
+    else
+        selecionar_script "$escolha" "$files"
+    fi
+}
+
+# Função para selecionar script pelo número
+selecionar_script() {
+    local escolha=$1
+    local files=$2
+    local count=1
+    for script in $files; do
+        if [ "$count" -eq "$escolha" ]; then
+            echo -e "\033[1;36mVocê escolheu o script: $script\033[0m"
+            echo -e "\033[1;32mScript encontrado com sucesso!\033[0m"
+            sleep 1
+            break
+        fi
+        ((count++))
+    done
+    menu
 }
 
 # Adicionar AutoExec Script

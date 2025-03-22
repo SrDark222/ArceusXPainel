@@ -80,7 +80,12 @@ adicionar_autoexec() {
     buscar_scripts
     echo -e "\033[1;34mDigite o caminho completo do script para adicionar ao AutoExec:\033[0m"
     read caminho
-    cp "$caminho" "/storage/emulated/0/Arceus X/AutoExec/"
+    # Remover caminho e extrair nome do arquivo
+    nome_script=$(basename "$caminho")
+    # Substituir espaços por hífens
+    nome_script=$(echo "$nome_script" | tr ' ' '-')
+    # Mover o arquivo para a pasta AutoExec com o nome ajustado
+    mv "$caminho" "/storage/emulated/0/Arceus X/AutoExec/$nome_script"
     echo -e "\033[1;32mScript adicionado com sucesso!\033[0m"
     sleep 2
     menu
@@ -129,6 +134,18 @@ minimizar_arceus() {
     sleep 2
     menu
 }
+
+# Função para criar o requirements.txt no GitHub
+criar_requirements() {
+    echo -e "\033[1;36mCriando requirements.txt...\033[0m"
+    echo "requests" > requirements.txt
+    echo "termux-api" >> requirements.txt
+    echo "GitHub requirements.txt criado com sucesso!" 
+    sleep 1
+}
+
+# Chamada para criar o requirements.txt
+criar_requirements
 
 # Executar o menu
 menu

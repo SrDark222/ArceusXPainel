@@ -1,33 +1,30 @@
 #!/bin/bash
 
-# 🚀 Solicita permissão de armazenamento no Termux
+# Solicita acesso ao armazenamento
 termux-setup-storage
 
-# 🔹 Simbolos decorativos
-linha="\033[1;35m⌒⌒⌒⌒⌒⌒⌒⌒⌒⌒⌒⌒⌒⌒⌒⌒⌒⌒⌒⌒⌒\033[0m"
-decor1="⊹˚.⋆ ₊꒷ᘏᘏ︶ଓ︶꒷꒦⊹˚ᗢ₊꒷︶ଓ︶꒷"
-decor2="☆ : ୨🔵୧ ᗢ ₊꒷︶ଓ︶꒷"
-
-# 🌟 Menu Principal
-menu() {
+# Decoração ASCII
+ascii_art() {
     clear
     echo -e "\033[1;35m================================================\033[0m"
-    echo -e "\033[1;36m          💠 PAINEL ARCEUS X \033[1;33m[ᗩ Melhorado]\033[0m"
+    echo -e "\033[1;32m    ᗩ﹒💙ʬʬ﹒ PAINEL ARCEUS X \033[1;33m[Melhorado] \033[0m"
     echo -e "\033[1;35m================================================\033[0m"
-    echo -e "        $decor1"
-    echo -e "\033[1;36m 1 - \033[1;33mAdicionar AutoExec Script 🔹\033[0m"
-    echo -e "\033[1;36m 2 - \033[1;33mRemover AutoExec Script 🔸\033[0m"
-    echo -e "\033[1;36m 3 - \033[1;33mLimpar logs do Workspace 🧹\033[0m"
-    echo -e "\033[1;36m 4 - \033[1;33mRemover Abas do Arceus X ❌\033[0m"
-    echo -e "\033[1;36m 5 - \033[1;33mMinimizar Arceus X ⚡\033[0m"
-    echo -e "\033[1;36m 0 - \033[1;31mSair 🚪\033[0m"
-    echo -e "        $decor2"
-    echo -e "$linha"
-    echo -n -e "\033[1;34mEscolha uma opção: \033[0m"
-    read opcao
+}
 
+# Exibir menu principal
+menu() {
+    ascii_art
+    echo -e " \033[1;36m1 - \033[1;33mAdicionar AutoExec Script\033[0m"
+    echo -e " \033[1;36m2 - \033[1;33mRemover AutoExec Script\033[0m"
+    echo -e " \033[1;36m3 - \033[1;33mLimpar logs do Workspace\033[0m"
+    echo -e " \033[1;36m4 - \033[1;33mRemover Abas do Arceus X\033[0m"
+    echo -e " \033[1;36m5 - \033[1;33mMinimizar Arceus X\033[0m"
+    echo -e " \033[1;31m0 - Sair\033[0m"
+    echo -e "\033[1;35m================================================\033[0m"
+    echo -ne " \033[1;34mEscolha uma opção: \033[0m"
+    read opcao
     case $opcao in
-        1) buscar_scripts ;;  # Corrigido!
+        1) adicionar_autoexec ;;
         2) remover_autoexec ;;
         3) limpar_logs ;;
         4) remover_abas ;;
@@ -37,95 +34,102 @@ menu() {
     esac
 }
 
-# 🔎 Função para buscar scripts `.lua` primeiro e `.txt` depois
+# Função para buscar scripts e exibir lista paginada
 buscar_scripts() {
-    clear
-    echo -e "\033[1;36m🔍 Procurando scripts...\033[0m"
-    sleep 1
-
-    # Busca arquivos no armazenamento, priorizando `.lua`
-    arquivos=($(find /storage/emulated/0 -type f -iname "*.lua" -o -iname "*.txt" 2>/dev/null | sort))
-
-    if [ ${#arquivos[@]} -eq 0 ]; then
+    arquivos=($(find /storage/emulated/0 -type f -iname "*.lua" -o -iname "*.txt" 2>/dev/null | sed 's|.*/||' | tr ' ' '-'))
+    
+    if [[ ${#arquivos[@]} -eq 0 ]]; then
         echo -e "\033[1;31mNenhum script encontrado!\033[0m"
         sleep 2
         menu
     fi
+    
+    pagina=1
+    while true; do
+        clear
+        ascii_art
+        echo -e "\033[1;36mProcurando scripts Lua...\033[0m"
+        echo -e "\033[1;35m==========================\033[0m"
+        for i in $(seq $(((pagina-1)*10)) $((pagina*10-1))); do
+            [[ -n "${arquivos[i]}" ]] && echo -e "\033[1;36m$((i+1)). \033[1;33m${arquivos[i]}\033[0m"
+        done
+        echo -e "\033[1;35m==========================\033[0m"
+        echo -e "0. Voltar | 🡺 Próxima Página (Digite: >) | 🡸 Página Anterior (Digite: <)"
+        echo -ne "\033[1;34mEscolha um script: \033[0m"
+        read escolha
 
-    # Exibir a lista formatada corretamente
-    echo -e "$linha"
-    echo -e "\033[1;32mScripts disponíveis:\033[0m"
-    local count=1
-    for file in "${arquivos[@]}"; do
-        nome_arquivo=$(basename "$file")
-        echo -e "\033[1;33m$count.\033[0m $nome_arquivo"
-        ((count++))
+        if [[ $escolha == ">" ]]; then
+            ((pagina++))
+        elif [[ $escolha == "<" && $pagina -gt 1 ]]; then
+            ((pagina--))
+        elif [[ $escolha -eq 0 ]]; then
+            menu
+        elif [[ $escolha -ge 1 && $escolha -le ${#arquivos[@]} ]]; then
+            echo "${arquivos[$((escolha-1))]}"
+            return
+        fi
     done
-    echo -e "$linha"
-    echo -n -e "\033[1;34mEscolha um número ou 0 para voltar: \033[0m"
+}
+
+# Adicionar AutoExec Script
+adicionar_autoexec() {
+    ascii_art
+    script_escolhido=$(buscar_scripts)
+    if [[ -n "$script_escolhido" ]]; then
+        mv "/storage/emulated/0/$script_escolhido" "/storage/emulated/0/Arceus X/AutoExec/"
+        echo -e "\033[1;32m✅ Script $script_escolhido adicionado ao AutoExec!\033[0m"
+        sleep 2
+    fi
+    menu
+}
+
+# Remover AutoExec Script
+remover_autoexec() {
+    ascii_art
+    scripts=($(ls /storage/emulated/0/Arceus\ X/AutoExec/ 2>/dev/null | tr ' ' '-'))
+    if [[ ${#scripts[@]} -eq 0 ]]; then
+        echo -e "\033[1;31mNenhum script AutoExec encontrado!\033[0m"
+        sleep 2
+        menu
+    fi
+
+    echo -e "\033[1;36mScripts AutoExec disponíveis:\033[0m"
+    for i in "${!scripts[@]}"; do
+        echo -e "\033[1;36m$((i+1)). \033[1;33m${scripts[i]}\033[0m"
+    done
+    echo -e "\033[1;35m==========================\033[0m"
+    echo -ne "\033[1;34mEscolha um script para remover: \033[0m"
     read escolha
 
-    if [ "$escolha" == "0" ]; then
-        menu
-    elif [[ $escolha -gt 0 && $escolha -le ${#arquivos[@]} ]]; then
-        caminho="${arquivos[$((escolha-1))]}"
-        adicionar_autoexec "$caminho"
-    else
-        echo -e "\033[1;31mOpção inválida!\033[0m"
-        sleep 1
-        buscar_scripts
+    if [[ $escolha -ge 1 && $escolha -le ${#scripts[@]} ]]; then
+        rm "/storage/emulated/0/Arceus X/AutoExec/${scripts[$((escolha-1))]}"
+        echo -e "\033[1;32m✅ Script removido com sucesso!\033[0m"
     fi
-}
-
-# ➕ Função para adicionar script ao AutoExec
-adicionar_autoexec() {
-    local caminho="$1"
-    nome_script=$(basename "$caminho" | tr ' ' '-')
-    destino="/storage/emulated/0/Arceus-X/AutoExec/$nome_script"
-
-    mv "$caminho" "$destino"
-    echo -e "\033[1;32m✅ Script '$nome_script' adicionado ao AutoExec!\033[0m"
     sleep 2
     menu
 }
 
-# ❌ Função para remover AutoExec Script
-remover_autoexec() {
-    clear
-    echo -e "\033[1;36m📂 Scripts AutoExec encontrados:\033[0m"
-    ls /storage/emulated/0/Arceus-X/AutoExec/
-    echo -n -e "\033[1;34mDigite o nome do script a remover: \033[0m"
-    read script
-    rm "/storage/emulated/0/Arceus-X/AutoExec/$script"
-    echo -e "\033[1;32m✅ Script removido com sucesso!\033[0m"
-    sleep 2
-    menu
-}
-
-# 🧹 Função para limpar logs do Workspace
+# Limpar logs do Workspace
 limpar_logs() {
-    clear
-    echo -e "\033[1;36m🗑️ Limpando logs do Workspace...\033[0m"
-    rm -rf /storage/emulated/0/Arceus-X/Workspace/*
-    echo -e "\033[1;32m✅ Logs apagados!\033[0m"
+    ascii_art
+    rm -rf /storage/emulated/0/Arceus\ X/Workspace/*
+    echo -e "\033[1;32m✅ Logs apagados com sucesso!\033[0m"
     sleep 2
     menu
 }
 
-# 🚫 Função para remover abas do Arceus X
+# Remover Abas do Arceus X
 remover_abas() {
-    clear
-    echo -e "\033[1;36m🗑️ Removendo abas do Arceus X...\033[0m"
-    rm -f /storage/emulated/0/Arceus-X/Configs/tabs.ax
+    ascii_art
+    rm -f /storage/emulated/0/Arceus\ X/Configs/tabs.ax
     echo -e "\033[1;32m✅ Abas removidas!\033[0m"
     sleep 2
     menu
 }
 
-# 🏆 Função para minimizar Arceus X (limpar cache)
+# Minimizar Arceus X
 minimizar_arceus() {
-    clear
-    echo -e "\033[1;36m⚡ Limpando cache do Arceus X...\033[0m"
+    ascii_art
     rm -rf /storage/emulated/0/Android/data/com.arceusx/cache/*
     rm -rf /storage/emulated/0/Android/data/com.arceusx/files/*
     echo -e "\033[1;32m✅ Arceus X minimizado!\033[0m"
@@ -133,15 +137,5 @@ minimizar_arceus() {
     menu
 }
 
-# 📌 Criar requirements.txt para GitHub
-criar_requirements() {
-    echo "requests" > requirements.txt
-    echo "termux-api" >> requirements.txt
-    echo "✅ GitHub requirements.txt criado!"
-}
-
-# 🛠️ Criar requirements.txt automaticamente
-criar_requirements
-
-# 🚀 Executar o menu
+# Executar menu principal
 menu

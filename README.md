@@ -11,8 +11,7 @@ Antes de executar o script, é necessário garantir que os pacotes do Termux est
 pkg update --fix-missing
 pkg upgrade
 pkg install git
-pkg install nano
-pkg install bash
+Y
 ```
 
 ## 2. Clonar o repositório

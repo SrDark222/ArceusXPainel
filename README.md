@@ -19,8 +19,8 @@ Siga os seguintes passos no Termux para baixar o script diretamente do GitHub:
    Caso você não tenha o `curl` ou o `wget` instalado, instale um deles com os seguintes comandos:
 
    Para **curl**:
-   ```bash
-   pkg install curl
+  ``bash
+   pkg install curl``
 
 Ou para **wget**:
 ```pkg install wget```
